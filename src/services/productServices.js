@@ -3,7 +3,7 @@ const productDao = new MongoDaoManager();
 
 import {__dirname} from '../utils.js';
 //import ProductManager from '../daos/filesystem/manager.js';
-//const productDao = new ProductManager(`${__dirname}/daos/filesystem/products.json`);
+//const productDao = new ProductManager(`${__dirname}/data/nuevoProducto.json`);
 
 
 export const getAll = async () => {
