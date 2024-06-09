@@ -7,7 +7,10 @@ import morgan from "morgan";
 import handlebars from "express-handlebars";
 import { Server } from "socket.io";
 import { connectMongoDB } from "./daos/mongodb/connection.js";
-import 'dotenv/config';
+import * as dotenv from 'dotenv';
+dotenv.config({ path: './.env' });
+import { chatSocket } from "./controllers/chatController.js";
+
 
 const app = express();
 
@@ -31,18 +34,19 @@ const httpServer = app.listen(8080, ()=>{
     console.log(' Server listening on port 8080');
 });
 
-const socketServer = new Server(httpServer);
+const io = new Server(httpServer);
 
-socketServer.on('connection', (socket) => {
+io.on('connection', (socket) => {
     console.log(`Cliente conectado: ${socket.id}`);
 
     socket.on('disconnect', () => {
         console.log('Usuario desconectado');
     })    
 })
+chatSocket(io);
 
 export function getSocket(){
-    return socketServer;
+    return io;
 }
 
 

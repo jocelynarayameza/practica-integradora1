@@ -2,7 +2,7 @@ import fs from "fs";
 import { v4 as uuidv4 } from "uuid";
 import ProductManager from "./manager.js";
 
-const productManager = new ProductManager("./manager/nuevoProducto.json");
+const productManager = new ProductManager("./data/nuevoProducto.json");
 
 export default class CartManager {
   constructor(path) {
@@ -73,4 +73,38 @@ export default class CartManager {
     }
   }
 
+async deleteProductFromCart(idCart, idProduct) {
+  try {
+    const cartExists = await this.getCartById(idCart);
+    if (!cartExists) throw new Error('Carrito no encontrado');
+    const productIndex = cartExists.products.findIndex((prod) => prod.id === idProduct);
+    if (productIndex === -1) throw new Error('Producto no encontrado en el carrito');
+    cartExists.products.splice(productIndex, 1);
+    let carts = await this.getCart();
+    const updatedCarts = carts.map((cart) => {
+      if (cart.id === idCart) return cartExists;
+      return cart;
+    });
+    await fs.promises.writeFile(this.path, JSON.stringify(updatedCarts));
+    return cartExists;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+async updateCart (idCart){
+  try {
+    const cartExists = await this.getCartById(idCart);
+    if (!cartExists) throw new Error('Carrito no encontrado');
+    let carts = await this.getCart();
+    const updatedCarts = carts.map((cart) => {
+      if (cart.id === idCart) return cartExists;
+      return cart;
+    });
+    await fs.promises.writeFile(this.path, JSON.stringify(updatedCarts));
+    return cartExists;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
 }
